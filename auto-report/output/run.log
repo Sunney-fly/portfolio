@@ -1,0 +1,69 @@
+  0.002s | INFO | run         | AutoReport v1.0.0 - VoltHaus Electronics — Catalogue Health Report ------------
+  0.002s | INFO | run         | config      : config.json
+  0.002s | INFO | run         | output dir  : output
+  0.002s | INFO | run         | fetch mode  : auto
+  0.002s | INFO | run         | python      : 3.12.10
+  0.002s | INFO | run         | third-party : none (standard library only)
+  0.002s | INFO | fetch       | [2/6] start
+  0.034s | INFO | fetch       | mode='auto' sources=2 user-agent='AutoReportBot/1.0 (+https://example.com/bot; con'
+  0.078s | INFO | fetch       | reachability probe catalog.volthaus-electronics.example:443 -> DOWN (gaierror: [Errno 11001] getaddrinfo failed)
+  0.078s | WARN | fetch       | catalog-p1: host unavailable (gaierror: [Errno 11001] getaddrinfo failed); using local fixture
+  0.079s | INFO | fetch       | catalog-p1: loaded fixture volthaus_catalog_p1.html (14,542 chars) [fixture-fallback, 0.04s]
+  0.079s | WARN | fetch       | catalog-p2: host unavailable (gaierror: [Errno 11001] getaddrinfo failed); using local fixture
+  0.080s | INFO | fetch       | catalog-p2: loaded fixture volthaus_catalog_p2.html (7,427 chars) [fixture-fallback, 0.00s]
+  0.080s | INFO | parse       | [3/6] start
+  0.085s | INFO | parse       | catalog-p1: 26 record(s) from 26 card(s); recovered 0 unclosed field(s); skipped 445 chars of inline script/style
+  0.086s | INFO | parse       | catalog-p2: 14 record(s) from 14 card(s); recovered 0 unclosed field(s)
+  0.086s | OK   | parse       | total raw records: 40 (inline JS/CSS ignored: 445 chars)
+  0.086s | INFO | clean       | [4/6] start
+  0.094s | INFO | clean       | duplicate sku='VH-LAP-1002': kept AeroBook Air 13 of 2 rows (keep_most_complete)
+  0.094s | WARN | clean       | 1 price outlier(s) flagged for review (modified z >= 5.0): VH-LAP-1006=2,899.00 (z=5.9)
+  0.094s | OK   | clean       | 40 raw -> 32 clean row(s); 8 dropped; 13 row(s) carry warnings
+  0.095s | INFO | clean       | dropped   2 x missing_price (No numeric price present in the record)
+  0.095s | INFO | clean       | dropped   1 x price_above_maximum (Price above cleaning.max_price (likely data-entry error))
+  0.095s | INFO | clean       | dropped   1 x price_unparseable (Price text is malformed in the source)
+  0.095s | INFO | clean       | dropped   1 x missing_sku (Missing or blank SKU)
+  0.095s | INFO | clean       | dropped   1 x price_below_minimum (Price below cleaning.min_price)
+  0.095s | INFO | clean       | dropped   1 x missing_title (Missing or too-short product title)
+  0.095s | INFO | clean       | dropped   1 x duplicate_sku (Duplicate SKU (the most complete record was kept))
+  0.095s | INFO | clean       | flagged   3 x currency_inferred (Currency inferred from the price text)
+  0.095s | INFO | clean       | flagged   3 x missing_brand (Brand not present in the markup)
+  0.095s | INFO | clean       | flagged   3 x missing_date (Listing date absent)
+  0.095s | INFO | clean       | flagged   2 x missing_stock (No stock status)
+  0.095s | INFO | clean       | flagged   2 x missing_rating (No rating)
+  0.095s | INFO | clean       | flagged   2 x invalid_date (Listing date could not be parsed)
+  0.095s | INFO | clean       | flagged   1 x currency_assumed_base (Currency unknown, base currency assumed)
+  0.095s | INFO | clean       | flagged   1 x currency_mismatch (Currency attribute disagreed with the price text)
+  0.095s | INFO | clean       | flagged   1 x duplicate_product_name (Same product name listed under a different SKU)
+  0.095s | INFO | clean       | flagged   1 x price_outlier_review (Price is a statistical outlier, flagged for review)
+  0.095s | INFO | analyse     | [5/6] start
+  0.095s | INFO | analyse     | price n=32 min=29.99 mean=726.49 median=339.5 max=2899.0
+  0.095s | INFO | analyse     | catalogue value USD 23,247; 5 categor(ies), 3 brand(s)
+  0.095s | INFO | analyse     | trend Jan 2024 -> Mar 2024 mean price 501.75 -> 703.8 (+40.3%)
+  0.095s | OK   | analyse     | metrics computed for 32 row(s)
+  0.095s | INFO | report      | [6/6] start
+  0.142s | OK   | report      | wrote report.csv (32 rows, 6421 bytes)
+  0.144s | OK   | report      | wrote report.html (49780 bytes, 32 rows, 3 chart(s))
+  0.146s | OK   | report      | wrote summary.json (19836 bytes)
+  0.146s | INFO | report      | report.xlsx skipped — openpyxl not importable (ModuleNotFoundError)
+  0.147s | INFO | run         | SUMMARY -----------------------------------------------------------------------
+  0.147s | INFO | run         | rows parsed        : 40
+  0.147s | INFO | run         | rows clean         : 32 (80.0% pass)
+  0.147s | INFO | run         | rows dropped       : 8 (missing_price=2, price_above_maximum=1, price_unparseable=1, missing_sku=1, price_below_minimum=1, missing_title=1, duplicate_sku=1)
+  0.147s | INFO | run         | price min/mean/med : $29.99 / $726.49 / $339.50
+  0.147s | INFO | run         | price max          : $2,899.00
+  0.147s | INFO | run         | catalogue value    : USD 23,247.59 (32 rows)
+  0.147s | INFO | run         | categories / brands: 5 / 3
+  0.147s | INFO | run         | mean rating        : 4.41
+  0.147s | INFO | run         | collection route   : catalog-p1=fixture-fallback, catalog-p2=fixture-fallback
+  0.147s | INFO | run         | finished with 3 warning(s)
+
+STAGE         TIME  DETAIL
+-------  ---------  ------
+config      0.002s  2 source(s)
+fetch       0.077s  2 source(s), 21,969 chars
+parse       0.007s  40 raw record(s)
+clean       0.008s  32 kept / 8 dropped
+analyse     0.001s  5 categor(ies), 10 metric group(s)
+report      0.051s  3 file(s)
+TOTAL       0.146s  

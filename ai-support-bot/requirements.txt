@@ -1,0 +1,7 @@
+# No third-party dependencies are required.
+#
+# This project intentionally uses only the Python standard library:
+#   http.server, urllib.request, json, pathlib, math, re, collections, os, sys, time
+#
+# There is nothing to install. Just run:
+#   python app.py

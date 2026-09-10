@@ -1,0 +1,33 @@
+﻿sku,title,brand,category,currency,price,price_base,base_currency,listed,listed_month,rating,rating_count,stock_status,stock_qty,url,source,source_label,source_mode,completeness,warnings
+VH-LAP-1001,AeroBook Pro 14,VoltHaus,Laptops,USD,1299.0,1299.0,USD,2024-01-14,2024-01,4.6,218,in_stock,12,/p/vh-lap-1001,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-LAP-1002,AeroBook Air 13,VoltHaus,Laptops,USD,949.5,949.5,USD,2024-01-22,2024-01,4.4,402,in_stock,31,/p/vh-lap-1002,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-LAP-1003,Nimbus Ultra 16,Nimbus,Laptops,USD,2150.0,2150.0,USD,2024-02-05,2024-02,4.7,96,low_stock,3,/p/vh-lap-1003,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-LAP-1004,Nimbus Studio 15,Nimbus,Laptops,USD,1845.0,1845.0,USD,2024-02-14,2024-02,4.5,141,in_stock,7,/p/vh-lap-1004,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,currency_inferred
+VH-LAP-1006,Kestrel Gaming 17,Kestrel,Laptops,USD,2899.0,2899.0,USD,2024-02-24,2024-02,4.8,233,low_stock,4,/p/vh-lap-1006,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,price_outlier_review
+VH-LAP-1007,Kestrel Gaming 15,Kestrel,Laptops,USD,2349.0,2349.0,USD,2024-03-02,2024-03,4.6,311,backorder,3,/p/vh-lap-1007,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-MON-2001,ClarityView 27 4K,VoltHaus,Monitors,USD,549.0,549.0,USD,2024-01-09,2024-01,4.5,512,in_stock,22,/p/vh-mon-2001,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-MON-2002,ClarityView 32 4K,VoltHaus,Monitors,USD,749.0,749.0,USD,2024-01-30,2024-01,4.4,287,in_stock,9,/p/vh-mon-2002,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-MON-2003,UltraWide 34 Curved,Nimbus,Monitors,USD,899.99,899.99,USD,2024-02-11,2024-02,4.7,163,in_stock,15,/p/vh-mon-2003,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-MON-2004,PixelPro 24 IPS,Kestrel,Monitors,USD,229.0,229.0,USD,2024-02-27,2024-02,4.1,640,out_of_stock,0,/p/vh-mon-2004,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-MON-2005,StudioColour 27,Nimbus,Monitors,EUR,689.99,745.19,USD,2024-03-03,2024-03,4.0,74,in_stock,18,/p/vh-mon-2005,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-MON-2006,ClarityView 27 QHD,VoltHaus,Monitors,USD,749.0,749.0,USD,2024-03-19,2024-03,4.3,198,low_stock,5,/p/vh-mon-2006,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,currency_assumed_base
+VH-AUD-2101,EchoPod Pro ANC,,Audio,USD,249.5,249.5,USD,2024-01-05,2024-01,4.7,1204,in_stock,63,/p/vh-aud-2101,catalog-p1,Storefront catalogue — page 1,fixture-fallback,90.0,missing_brand
+VH-AUD-2102,EchoPod Lite,VoltHaus,Audio,USD,129.0,129.0,USD,2024-01-19,2024-01,4.2,860,in_stock,140,/p/vh-aud-2102,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-AUD-2103,Resonance 500 Studio,Nimbus,Audio,EUR,1299.0,1402.92,USD,2024-02-08,2024-02,4.9,47,low_stock,3,/p/vh-aud-2103,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,currency_inferred
+VH-AUD-2104,BassLine Party Speaker,Kestrel,Audio,USD,399.0,399.0,USD,2024-02-21,2024-02,3.8,233,out_of_stock,0,/p/vh-aud-2104,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-AUD-2106,Resonance 300,Nimbus,Audio,GBP,189.0,240.03,USD,2024-03-27,2024-03,4.4,88,in_stock,11,/p/vh-aud-2106,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-STO-2201,VaultDrive 2TB NVMe,VoltHaus,Storage,USD,189.99,189.99,USD,,,4.6,731,in_stock,58,/p/vh-sto-2201,catalog-p1,Storefront catalogue — page 1,fixture-fallback,90.0,duplicate_product_name;missing_date
+VH-STO-2202,VaultDrive 4TB NVMe,VoltHaus,Storage,USD,329.99,329.99,USD,2024-02-02,2024-02,4.5,402,in_stock,27,/p/vh-sto-2202,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-STO-2203,ArchiveBox 8TB HDD,Nimbus,Storage,USD,219.0,219.0,USD,2024-02-14,2024-02,4.1,156,unknown,,/p/vh-sto-2203,catalog-p1,Storefront catalogue — page 1,fixture-fallback,90.0,missing_stock
+VH-STO-2204,PocketSSD 1TB,Kestrel,Storage,USD,119.0,119.0,USD,2024-03-01,2024-03,4.3,921,in_stock,204,/p/vh-sto-2204,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,
+VH-STO-2205,VaultDrive 2TB NVMe,VoltHaus,Storage,USD,199.99,199.99,USD,2024-03-12,2024-03,4.5,88,low_stock,3,/p/vh-sto-2205,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,duplicate_product_name
+VH-STO-2206,ArchiveBox 16TB HDD,Nimbus,Storage,GBP,1450.0,1841.5,USD,2024-03-22,2024-03,4.0,64,in_stock,6,/p/vh-sto-2206,catalog-p1,Storefront catalogue — page 1,fixture-fallback,100.0,currency_mismatch
+VH-ACC-3001,USB-C 100W Charger,VoltHaus,Accessories,USD,59.0,59.0,USD,2024-01-16,2024-01,4.5,1330,in_stock,410,/p/vh-acc-3001,catalog-p2,Storefront catalogue — page 2,fixture-fallback,100.0,
+VH-ACC-3002,USB-C to HDMI Adapter,VoltHaus,Accessories,USD,29.99,29.99,USD,2024-01-28,2024-01,4.2,742,in_stock,620,/p/vh-acc-3002,catalog-p2,Storefront catalogue — page 2,fixture-fallback,100.0,
+VH-ACC-3003,Mechanical Keyboard TKL,Kestrel,Accessories,USD,129.0,129.0,USD,2024-02-12,2024-02,,,in_stock,88,/p/vh-acc-3003,catalog-p2,Storefront catalogue — page 2,fixture-fallback,80.0,missing_rating
+VH-ACC-3004,Ergo Mouse Vertical,Kestrel,Accessories,USD,69.5,69.5,USD,2024-02-25,2024-02,4.4,1203,in_stock,245,/p/vh-acc-3004,catalog-p2,Storefront catalogue — page 2,fixture-fallback,100.0,
+VH-ACC-3005,Laptop Stand Aluminium,Nimbus,Accessories,USD,45.0,45.0,USD,2024-03-04,2024-03,4.1,318,out_of_stock,0,/p/vh-acc-3005,catalog-p2,Storefront catalogue — page 2,fixture-fallback,100.0,
+VH-ACC-3006,Desk Mat XL,,Accessories,USD,39.0,39.0,USD,,,4.3,207,in_stock,131,/p/vh-acc-3006,catalog-p2,Storefront catalogue — page 2,fixture-fallback,80.0,missing_brand;missing_date
+VH-ACC-3009,Docking Station 12-in-1,Nimbus,Accessories,USD,45.5,45.5,USD,2024-03-24,2024-03,4.2,178,in_stock,23,/p/vh-acc-3009,catalog-p2,Storefront catalogue — page 2,fixture-fallback,100.0,currency_inferred
+VH-LAP-1009,Nimbus Ultra 14,Nimbus,Laptops,USD,1749.0,1749.0,USD,,,4.6,128,in_stock,9,/p/vh-lap-1009,catalog-p2,Storefront catalogue — page 2,fixture-fallback,90.0,invalid_date
+VH-AUD-2107,EchoPod Max ANC,VoltHaus,Audio,USD,349.0,349.0,USD,,,4.8,512,in_stock,21,/p/vh-aud-2107,catalog-p2,Storefront catalogue — page 2,fixture-fallback,90.0,invalid_date

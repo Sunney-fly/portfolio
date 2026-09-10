@@ -1,0 +1,110 @@
+{
+  "$comment": "Config-driven pipeline. A client adapts THIS file, not the Python. Paths are relative to this file.",
+  "project": {
+    "name": "VoltHaus Electronics — Catalogue Health Report",
+    "client": "VoltHaus Electronics (demo dataset)",
+    "prepared_by": "Your Name — Web Scraping & Data Automation",
+    "notes": "Portfolio demo. Source is the bundled offline fixture; the fetcher also contains real HTTP code."
+  },
+
+  "fetch": {
+    "mode": "auto",
+    "user_agent": "AutoReportBot/1.0 (+https://example.com/bot; contact: hello@example.com)",
+    "accept_language": "en-US,en;q=0.9",
+    "timeout_seconds": 8,
+    "max_retries": 2,
+    "backoff_base_seconds": 0.6,
+    "backoff_max_seconds": 6.0,
+    "rate_limit_min_interval_seconds": 1.0,
+    "probe_timeout_seconds": 1.5,
+    "fixture_encoding": "utf-8",
+    "sources": [
+      {
+        "id": "catalog-p1",
+        "label": "Storefront catalogue — page 1",
+        "url": "https://catalog.volthaus-electronics.example/products?page=1",
+        "fixture": "fixtures/volthaus_catalog_p1.html"
+      },
+      {
+        "id": "catalog-p2",
+        "label": "Storefront catalogue — page 2",
+        "url": "https://catalog.volthaus-electronics.example/products?page=2",
+        "fixture": "fixtures/volthaus_catalog_p2.html"
+      }
+    ]
+  },
+
+  "selectors": {
+    "record_tag": "article",
+    "record_class": "product-card",
+    "record_attributes": {
+      "sku": "data-sku",
+      "category": "data-category",
+      "listed_raw": "data-listed"
+    },
+    "fields": {
+      "title": { "class": "product-title" },
+      "brand": { "class": "brand", "nested_in": "title" },
+      "price_raw": { "class": "price", "attributes": { "currency_attr": "data-currency" } },
+      "rating": { "class": "rating", "attributes": { "score": "data-score", "count": "data-count" } },
+      "badge": { "class": "badge", "nested_in": "price_raw" },
+      "stock_raw": { "class": "stock-status" },
+      "url": { "class": "product-link", "attribute": "href" }
+    }
+  },
+
+  "brands": ["VoltHaus", "Nimbus", "Kestrel"],
+
+  "cleaning": {
+    "required_fields": ["sku", "title", "price_base"],
+    "min_price": 0.01,
+    "max_price": 25000.0,
+    "min_title_length": 3,
+    "sku_pattern": "^[A-Z]{2}-[A-Z]{3}-[0-9]{4}$",
+    "date_input_formats": [
+      "%Y-%m-%d", "%Y/%m/%d", "%d/%m/%Y", "%d-%m-%Y",
+      "%d %b %Y", "%d %B %Y", "%b %d, %Y", "%B %d, %Y", "%b %d %Y", "%B %d %Y"
+    ],
+    "date_day_first": true,
+    "dedupe": {
+      "key": "sku",
+      "strategy": "keep_most_complete",
+      "flag_duplicate_product_names": true
+    },
+    "outliers": {
+      "method": "modified_zscore",
+      "threshold": 5.0,
+      "action": "flag"
+    },
+    "rating_range": [0.0, 5.0]
+  },
+
+  "currency": {
+    "base": "USD",
+    "rates_to_base": { "USD": 1.0, "EUR": 1.08, "GBP": 1.27, "CAD": 0.74, "AUD": 0.66 },
+    "symbols": { "$": "USD", "\u20ac": "EUR", "\u00a3": "GBP", "\u00a5": "JPY", "\u20b9": "INR" },
+    "prefixes": { "US$": "USD", "C$": "CAD", "A$": "AUD", "NZ$": "NZD" }
+  },
+
+  "analysis": {
+    "top_n": 5,
+    "trend_granularity": "month",
+    "stock_bands": { "low_stock_max": 5 }
+  },
+
+  "report": {
+    "title": "Catalogue Health Report",
+    "subtitle": "Scraped, cleaned and analysed automatically — one command, no third-party libraries",
+    "accent": "#2563eb",
+    "accent_dark": "#1e40af",
+    "max_table_rows": 40,
+    "output_dir": "output",
+    "files": {
+      "html": "report.html",
+      "csv": "report.csv",
+      "json": "summary.json",
+      "xlsx": "report.xlsx",
+      "log": "run.log"
+    }
+  }
+}

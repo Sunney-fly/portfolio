@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brightpath Goods &middot; AI Support Assistant</title>
+<style>
+  :root{
+    --bg:#eef1f6; --card:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
+    --brand:#0f766e; --brand-2:#14b8a6; --live:#059669; --mock:#b45309; --radius:16px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{
+    margin:0;font-family:var(--font);color:var(--ink);
+    background:radial-gradient(1200px 600px at 20% -10%,#dbeafe 0,transparent 60%),
+               radial-gradient(900px 500px at 100% 0,#ccfbf1 0,transparent 55%),var(--bg);
+    display:flex;align-items:center;justify-content:center;padding:24px;
+  }
+  .app{
+    width:100%;max-width:880px;height:min(860px,calc(100vh - 48px));background:var(--card);
+    border:1px solid var(--line);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(15,23,42,.28),0 2px 6px rgba(15,23,42,.06);
+  }
+  /* header */
+  header{
+    display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#fff,#f9fafb);
+  }
+  .mark{
+    width:42px;height:42px;border-radius:12px;flex:none;color:#fff;font-weight:700;font-size:19px;
+    background:linear-gradient(140deg,var(--brand),var(--brand-2));letter-spacing:.5px;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px -4px rgba(15,118,110,.55);
+  }
+  .who{min-width:0;flex:1}
+  .who h1{margin:0;font-size:15.5px;font-weight:650;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .who p{margin:2px 0 0;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--mock);box-shadow:0 0 0 3px rgba(180,83,9,.15)}
+  .dot.live{background:var(--live);box-shadow:0 0 0 3px rgba(5,150,105,.16)}
+  .pill{
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 11px;
+    border-radius:999px;border:1px solid #fde68a;background:#fffbeb;color:var(--mock);white-space:nowrap;
+  }
+  .pill.live{background:#ecfdf5;color:var(--live);border-color:#a7f3d0}
+  /* chat */
+  .chat{flex:1;overflow-y:auto;padding:22px 20px 8px;display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth}
+  .row{display:flex;gap:10px;max-width:88%;animation:rise .28s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .row.user{align-self:flex-end;flex-direction:row-reverse}
+  .avatar{
+    width:30px;height:30px;border-radius:9px;flex:none;font-size:11.5px;font-weight:700;color:#fff;
+    background:#94a3b8;display:flex;align-items:center;justify-content:center;
+  }
+  .row.bot .avatar{background:linear-gradient(140deg,var(--brand),var(--brand-2))}
+  .bubble{
+    padding:12px 15px;border-radius:var(--radius);font-size:14.5px;line-height:1.6;background:var(--card);
+    border:1px solid var(--line);border-top-left-radius:5px;box-shadow:0 1px 2px rgba(15,23,42,.04);
+    overflow-wrap:anywhere;
+  }
+  .row.user .bubble{
+    background:linear-gradient(140deg,var(--brand),#0d9488);color:#fff;border-color:transparent;
+    border-top-left-radius:var(--radius);border-top-right-radius:5px;box-shadow:0 6px 16px -8px rgba(15,118,110,.7);
+  }
+  .bubble p{margin:0 0 8px} .bubble p:last-child{margin:0}
+  .bubble ul,.bubble ol{margin:6px 0 8px;padding-left:20px}
+  .meta{margin-top:9px;font-size:11.5px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .tag{background:#f1f5f9;border-radius:6px;padding:2px 7px;font-weight:600;color:#475569}
+  .tag.warn{background:#fef3c7;color:#92400e}
+  /* sources expander */
+  .srcbtn{
+    margin-top:10px;font:inherit;font-size:12.5px;font-weight:600;color:var(--brand);cursor:pointer;
+    background:#f0fdfa;border:1px solid #99f6e4;border-radius:9px;padding:7px 11px;
+    display:inline-flex;align-items:center;gap:7px;transition:background .15s;
+  }
+  .srcbtn:hover{background:#ccfbf1}
+  .caret{transition:transform .2s;font-size:10px}
+  .srcbtn[aria-expanded="true"] .caret{transform:rotate(90deg)}
+  .sources{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;gap:9px;flex-direction:column}
+  .sources.open{display:flex}
+  .src{background:#f8fafc;border:1px solid var(--line);border-left:3px solid var(--brand-2);border-radius:10px;padding:9px 11px}
+  .src b{font-size:12.5px;display:block}
+  .src .sc{float:right;font-size:11px;color:var(--muted);font-weight:600}
+  .src small{color:var(--muted);font-size:11.5px;display:block;margin:1px 0 5px}
+  .src span{font-size:12.5px;color:#334155;line-height:1.5}
+  /* typing indicator */
+  .typing{display:flex;gap:4px;padding:15px}
+  .typing i{width:7px;height:7px;border-radius:50%;background:#94a3b8;animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.18s} .typing i:nth-child(3){animation-delay:.36s}
+  @keyframes blink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+  /* composer */
+  .composer{border-top:1px solid var(--line);padding:12px 16px 14px;background:#fbfcfd}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{
+    font:inherit;font-size:12.5px;white-space:nowrap;cursor:pointer;color:#334155;background:#fff;
+    border:1px solid var(--line);border-radius:999px;padding:6px 12px;transition:.15s;
+  }
+  .chip:hover{border-color:var(--brand-2);color:var(--brand);background:#f0fdfa}
+  .box{
+    display:flex;gap:10px;align-items:flex-end;background:#fff;border:1px solid var(--line);
+    border-radius:14px;padding:8px 8px 8px 14px;transition:border-color .15s,box-shadow .15s;
+  }
+  .box:focus-within{border-color:var(--brand-2);box-shadow:0 0 0 4px rgba(20,184,166,.12)}
+  textarea{
+    flex:1;border:0;outline:0;resize:none;font:inherit;font-size:14.5px;line-height:1.5;
+    max-height:120px;padding:6px 0;background:transparent;color:var(--ink);
+  }
+  .send{
+    border:0;cursor:pointer;width:40px;height:40px;border-radius:11px;flex:none;color:#fff;
+    background:linear-gradient(140deg,var(--brand),var(--brand-2));transition:.15s;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .send:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 18px -8px rgba(15,118,110,.9)}
+  .send:disabled{opacity:.45;cursor:not-allowed}
+  .foot{margin:8px 2px 0;font-size:11px;color:var(--muted);text-align:center}
+  @media (max-width:640px){
+    body{padding:0}
+    .app{height:100vh;border-radius:0;border:0;max-width:none}
+    .chat{padding:16px 12px 6px}
+    .row{max-width:94%}
+    .who h1{font-size:14px}
+    header{padding:12px 14px}
+    .composer{padding:10px 12px 12px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="mark">B</div>
+    <div class="who">
+      <h1>Brightpath Goods &middot; Support Assistant</h1>
+      <p><span class="dot" id="dot"></span><span id="status">connecting&hellip;</span></p>
+    </div>
+    <div class="pill" id="modePill">MOCK</div>
+  </header>
+
+  <main class="chat" id="chat"></main>
+
+  <div class="composer">
+    <div class="chips" id="chips">
+      <button class="chip">How long does standard shipping take?</button>
+      <button class="chip">Can I return an item after 30 days?</button>
+      <button class="chip">My card payment was declined, what now?</button>
+      <button class="chip">What does the warranty cover?</button>
+      <button class="chip">What are your support opening hours?</button>
+      <button class="chip">Do you ship to Norway?</button>
+    </div>
+    <form class="box" id="form">
+      <textarea id="input" rows="1" placeholder="Ask about shipping, returns, payments, warranty&hellip;" autocomplete="off"></textarea>
+      <button class="send" id="send" type="submit" title="Send" aria-label="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      </button>
+    </form>
+    <div class="foot">Answers are grounded in the Brightpath Goods help center &middot; retrieval-augmented, sources always shown</div>
+  </div>
+</div>
+
+<script>
+const chat = document.getElementById('chat'), form = document.getElementById('form');
+const input = document.getElementById('input'), sendBtn = document.getElementById('send');
+const history = [];
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* minimal markdown: paragraphs, **bold**, `code`, bullet and numbered lists */
+function render(text){
+  const inline = s => esc(s)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.+?)`/g, '<code>$1</code>');
+  const out = [];
+  let list = null;
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    const bullet = /^[-*\u2022]\s+/.test(line), numbered = /^\d+[.)]\s+/.test(line);
+    if (bullet || numbered) {
+      const tag = bullet ? 'ul' : 'ol';
+      if (list !== tag) { if (list) out.push('</' + list + '>'); out.push('<' + tag + '>'); list = tag; }
+      out.push('<li>' + inline(line.replace(/^([-*\u2022]|\d+[.)])\s+/, '')) + '</li>');
+      continue;
+    }
+    if (list) { out.push('</' + list + '>'); list = null; }
+    if (line) out.push('<p>' + inline(line) + '</p>');
+  }
+  if (list) out.push('</' + list + '>');
+  return out.join('') || '<p></p>';
+}
+
+function bubble(who, html, meta){
+  const row = document.createElement('div');
+  row.className = 'row ' + who;
+  row.innerHTML = '<div class="avatar">' + (who === 'bot' ? 'AI' : 'You') + '</div>' +
+                  '<div class="bubble">' + html + (meta || '') + '</div>';
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+  return row;
+}
+
+function sourcesBlock(sources){
+  if (!sources || !sources.length) return '';
+  const items = sources.map(s => '<div class="src"><span class="sc">score ' + s.score + '</span><b>' +
+    esc(s.doc) + '</b><small>' + esc(s.section) + '</small><span>' + esc(s.snippet) + '</span></div>').join('');
+  return '<button class="srcbtn" type="button" aria-expanded="false">' +
+         '<span class="caret">&#9654;</span> Sources used (' + sources.length + ')</button>' +
+         '<div class="sources">' + items + '</div>';
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.srcbtn');
+  if (!btn) return;
+  const open = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!open));
+  btn.querySelector('span').textContent = open ? '\u25B6' : '\u25BC';
+  btn.nextElementSibling.classList.toggle('open', !open);
+});
+
+async function ask(question){
+  bubble('user', render(question));
+  history.push({role: 'user', content: question});
+  sendBtn.disabled = true;
+  const target = bubble('bot', '<div class="typing"><i></i><i></i><i></i></div>').querySelector('.bubble');
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: question, history: history.slice(-6, -1)})
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+    target.innerHTML = render(data.answer) + sourcesBlock(data.sources) +
+      '<div class="meta"><span class="tag' + (data.mode === 'mock' ? ' warn' : '') + '">' +
+      (data.mode === 'live' ? 'LIVE \u00b7 ' + esc(data.model) : '[MOCK MODE] \u00b7 offline extractive') +
+      '</span><span>' + data.latency_ms + ' ms</span>' +
+      (data.note ? '<span>' + esc(data.note) + '</span>' : '') + '</div>';
+    history.push({role: 'assistant', content: data.answer});
+    chat.scrollTop = chat.scrollHeight;
+  } catch (err) {
+    target.innerHTML = render('Sorry, something went wrong: ' + err.message);
+  } finally {
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = ''; input.style.height = 'auto';
+  ask(text);
+});
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+});
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+});
+document.getElementById('chips').addEventListener('click', e => {
+  if (e.target.classList.contains('chip')) ask(e.target.textContent.trim());
+});
+
+(async function boot(){
+  bubble('bot', render("Hi! I'm the Brightpath Goods support assistant. I answer from our official help center and always show you the source documents I used. What can I help you with today?"));
+  try {
+    const h = await (await fetch('/api/health')).json();
+    const live = (h.mode || 'mock').toUpperCase() === 'LIVE';
+    const pill = document.getElementById('modePill');
+    pill.textContent = live ? 'LIVE' : 'MOCK';
+    pill.classList.toggle('live', live);
+    document.getElementById('dot').classList.toggle('live', live);
+    document.getElementById('status').textContent =
+      (live ? 'Live LLM \u00b7 ' + h.model : 'Mock mode \u00b7 no API key needed') +
+      ' \u00b7 ' + h.chunks + ' indexed passages from ' + h.documents.length + ' help-center docs';
+  } catch (e) {
+    document.getElementById('status').textContent = 'offline';
+  }
+  input.focus();
+})();
+</script>
+</body>
+</html>

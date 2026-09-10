@@ -1,0 +1,210 @@
+Brightpath Goods - AI Support Bot
+Real conversation transcript, captured from a live server run.
+
+  server   : python app.py            (PORT=8765)
+  command  : python selftest.py --url http://127.0.0.1:8765
+  mode     : MOCK MODE (no LLM_API_KEY set - fully offline, no credentials)
+  exit code: 0
+
+Every answer below was produced by POSTing to http://127.0.0.1:8765/api/chat
+and is quoted verbatim from the JSON response.
+
+Brightpath Goods support bot - self check
+retriever: BM25 (k1=1.50, b=0.75, heading boost 4.0x) over an inverted index
+index    : 31 chunks / 6 documents
+target   : http://127.0.0.1:8765
+------------------------------------------------------------------------------
+Q: How long does standard shipping take?
+A: [MOCK MODE] Standard shipping takes 3-5 business days within the EU and costs EUR 4.95.
+   Express shipping takes 1-2 business days and costs EUR 12.95. Standard shipping is free on
+   every order over EUR 60.00 after discounts.
+   mode=mock  model=extractive  1 ms
+   sources:
+     [1] shipping.md > Delivery options and times   score=8.7867
+         Brightpath Goods ships from our warehouse in Rotterdam, Netherlands. Standard
+         shipping takes 3-5 business days within the EU and costs EUR 4.95. Express shipping
+         takes 1-2 business days and costs EUR 12.95. Orders placed before 14:00 CET o…
+     [2] shipping.md > Order tracking   score=5.9864
+         As soon as your parcel leaves the warehouse you receive an email with a tracking
+         link. Tracking information can take up to 12 hours to become active in the
+         carrier's system. You can also see the current status at any time under "Orders"
+         in…
+     [3] shipping.md > Free shipping threshold   score=5.8423
+         Standard shipping is free on every order over EUR 60.00 after discounts. The free
+         shipping threshold does not apply to bulky items such as furniture, which always
+         carry a EUR 19.95 freight surcharge.
+     [4] shipping.md > International shipping   score=5.3643
+         We currently deliver to 31 European countries. Deliveries outside the EU (Iceland,
+         Norway, Switzerland and the United Kingdom) take 5-9 business days and may be
+         subject to import duties and customs fees, which are paid by the customer. We…
+   [PASS] grounded in shipping.md
+------------------------------------------------------------------------------
+Q: Do you ship to Norway and are there customs fees?
+A: [MOCK MODE] Deliveries outside the EU (Iceland, Norway, Switzerland and the United Kingdom)
+   take 5-9 business days and may be subject to import duties and customs fees, which are paid
+   by the customer.
+   mode=mock  model=extractive  0 ms
+   sources:
+     [1] shipping.md > International shipping   score=12.5505
+         We currently deliver to 31 European countries. Deliveries outside the EU (Iceland,
+         Norway, Switzerland and the United Kingdom) take 5-9 business days and may be
+         subject to import duties and customs fees, which are paid by the customer. We…
+     [2] shipping.md > Missing or delayed parcels   score=4.782
+         If tracking has not updated for more than 7 business days, contact support and we
+         will open a trace with the carrier. A parcel is officially considered lost after 21
+         days, and we will then reship the order at no cost or issue a full refund…
+     [3] shipping.md > Delivery options and times   score=4.5861
+         Brightpath Goods ships from our warehouse in Rotterdam, Netherlands. Standard
+         shipping takes 3-5 business days within the EU and costs EUR 4.95. Express shipping
+         takes 1-2 business days and costs EUR 12.95. Orders placed before 14:00 CET o…
+     [4] shipping.md > Order tracking   score=3.9472
+         As soon as your parcel leaves the warehouse you receive an email with a tracking
+         link. Tracking information can take up to 12 hours to become active in the
+         carrier's system. You can also see the current status at any time under "Orders"
+         in…
+   [PASS] grounded in shipping.md
+------------------------------------------------------------------------------
+Q: Can I return an item after 30 days?
+A: [MOCK MODE] You may return most items within 30 calendar days of delivery for a full refund.
+   The return window starts on the day the carrier marks the parcel as delivered.
+   mode=mock  model=extractive  0 ms
+   sources:
+     [1] returns.md > The 30-day return window   score=11.5547
+         You may return most items within 30 calendar days of delivery for a full refund.
+         The return window starts on the day the carrier marks the parcel as delivered.
+         Items must be unused, in their original packaging and with all accessories incl…
+     [2] returns.md > Non-returnable items   score=7.3305
+         For hygiene and safety reasons the following cannot be returned: opened mattresses
+         and pillows, personal care devices, gift cards, and perishable goods. Clearance
+         items marked "final sale" are also excluded. Perishable and final-sale items…
+     [3] returns.md > Damaged or incorrect items   score=6.4081
+         If your order arrives damaged or you received the wrong product, contact support
+         within 48 hours of delivery with your order number and a photo. We ship a
+         replacement immediately and cover all shipping costs.
+     [4] returns.md > Exchanges   score=6.1596
+         We do not process direct exchanges. Return the unwanted item for a refund and place
+         a new order for the item you want. This is the fastest way to get the product you
+         need, because it does not wait for the return to be inspected.
+   [PASS] grounded in returns.md
+------------------------------------------------------------------------------
+Q: How long does a refund take to arrive?
+A: [MOCK MODE] We inspect returns within 2 business days of arrival at our warehouse. Once
+   approved, the refund is issued to the original payment method. Card refunds appear within 3-5
+   business days, PayPal refunds within 1-2 business days, and bank transfers can take up to 10
+   business days depending on your bank.
+   mode=mock  model=extractive  0 ms
+   sources:
+     [1] returns.md > Refund timing   score=7.7835
+         We inspect returns within 2 business days of arrival at our warehouse. Once
+         approved, the refund is issued to the original payment method. Card refunds appear
+         within 3-5 business days, PayPal refunds within 1-2 business days, and bank tran…
+     [2] returns.md > Damaged or incorrect items   score=6.245
+         If your order arrives damaged or you received the wrong product, contact support
+         within 48 hours of delivery with your order number and a photo. We ship a
+         replacement immediately and cover all shipping costs.
+     [3] returns.md > Non-returnable items   score=5.4379
+         For hygiene and safety reasons the following cannot be returned: opened mattresses
+         and pillows, personal care devices, gift cards, and perishable goods. Clearance
+         items marked "final sale" are also excluded. Perishable and final-sale items…
+     [4] returns.md > The 30-day return window   score=4.1791
+         You may return most items within 30 calendar days of delivery for a full refund.
+         The return window starts on the day the carrier marks the parcel as delivered.
+         Items must be unused, in their original packaging and with all accessories incl…
+   [PASS] grounded in returns.md
+------------------------------------------------------------------------------
+Q: My card payment was declined, what happens now?
+A: [MOCK MODE] A payment can be declined because of an expired card, an incorrect billing
+   address, insufficient funds or a bank security block.
+   mode=mock  model=extractive  0 ms
+   sources:
+     [1] payments.md > Failed or declined payments   score=11.0393
+         A payment can be declined because of an expired card, an incorrect billing address,
+         insufficient funds or a bank security block. We retry a failed payment
+         automatically once after 24 hours. If the second attempt fails the order is
+         cancelle…
+     [2] payments.md > Accepted payment methods   score=7.9584
+         Brightpath Goods accepts Visa, Mastercard, American Express, Maestro, PayPal, Apple
+         Pay, Google Pay, iDEAL, Bancontact and SEPA bank transfer. All card payments are
+         processed by our PCI-DSS Level 1 payment provider; we never store full car…
+     [3] payments.md > Promo codes and gift cards   score=7.0692
+         Only one promo code can be applied per order and promo codes cannot be combined
+         with clearance pricing. Gift cards can be combined with promo codes. If a promo
+         code is not working, check that it has not expired and that your cart meets the…
+     [4] payments.md > Paying in instalments   score=5.7501
+         Orders between EUR 100 and EUR 3,000 can be split into 3 interest-free instalments.
+         The first instalment is charged at checkout and the remaining two are charged after
+         30 and 60 days. Instalment plans are available in Germany, the Netherla…
+   [PASS] grounded in payments.md
+------------------------------------------------------------------------------
+Q: What does the 2-year warranty cover?
+A: [MOCK MODE] Every Brightpath-branded product carries a 2-year limited warranty starting on
+   the delivery date. The warranty covers manufacturing defects and failures under normal use,
+   including electrical faults, broken hinges and seams, and premature battery failure.
+   mode=mock  model=extractive  0 ms
+   sources:
+     [1] warranty.md > What the warranty covers   score=11.4972
+         Every Brightpath-branded product carries a 2-year limited warranty starting on the
+         delivery date. The warranty covers manufacturing defects and failures under normal
+         use, including electrical faults, broken hinges and seams, and premature…
+     [2] warranty.md > What is not covered   score=8.0634
+         The warranty does not cover accidental damage, liquid damage, normal wear and tear,
+         cosmetic scratches, damage caused by unauthorised repair, or products used outside
+         their stated purpose. Consumable parts such as filters, blades and bulbs…
+     [3] warranty.md > Extended warranty   score=7.5353
+         You can extend the warranty to 4 years within 60 days of purchase for 12% of the
+         product price. The extended warranty is transferable if you gift the product, and
+         it includes one free accidental-damage repair.
+     [4] warranty.md > Repairs outside warranty   score=5.709
+         Out-of-warranty repairs are quoted before any work begins. A standard diagnostic
+         fee of EUR 29 applies and is credited against the repair if you accept the quote.
+         Typical turnaround for a repair is 10-15 business days.
+   [PASS] grounded in warranty.md
+------------------------------------------------------------------------------
+Q: How do I reset my password?
+A: [MOCK MODE] Use the "Forgot password" link on the sign-in page. The reset email arrives
+   within 5 minutes; check your spam folder if it does not. For security reasons a password
+   reset link expires after 60 minutes and can only be used once.
+   mode=mock  model=extractive  0 ms
+   sources:
+     [1] account.md > Resetting your password   score=16.7141
+         Use the "Forgot password" link on the sign-in page. The reset email arrives within
+         5 minutes; check your spam folder if it does not. For security reasons a password
+         reset link expires after 60 minutes and can only be used once.
+   [PASS] grounded in account.md
+------------------------------------------------------------------------------
+Q: What are your support opening hours?
+A: [MOCK MODE] Live chat on the website is the fastest option, with a typical first response
+   under 3 minutes during opening hours. Email to support@brightpath-goods.example is answered
+   within 8 business hours. Our support team is available Monday to Friday, 08:00 to 20:00 CET,
+   and Saturday 10:00 to 16:00 CET. Messages sent outside these hours are answered the next
+   business day.
+   mode=mock  model=extractive  1 ms
+   sources:
+     [1] contact.md > Channels and response times   score=7.2264
+         Live chat on the website is the fastest option, with a typical first response under
+         3 minutes during opening hours. Email to support@brightpath-goods.example is
+         answered within 8 business hours. Phone support is available on +31 20 555 014…
+     [2] contact.md > Support hours   score=6.4483
+         Our support team is available Monday to Friday, 08:00 to 20:00 CET, and Saturday
+         10:00 to 16:00 CET. We are closed on Sundays and on Dutch public holidays. Messages
+         sent outside these hours are answered the next business day.
+     [3] returns.md > Non-returnable items   score=4.5101
+         For hygiene and safety reasons the following cannot be returned: opened mattresses
+         and pillows, personal care devices, gift cards, and perishable goods. Clearance
+         items marked "final sale" are also excluded. Perishable and final-sale items…
+     [4] shipping.md > Missing or delayed parcels   score=3.7747
+         If tracking has not updated for more than 7 business days, contact support and we
+         will open a trace with the carrier. A parcel is officially considered lost after 21
+         days, and we will then reship the order at no cost or issue a full refund…
+   [PASS] grounded in contact.md
+------------------------------------------------------------------------------
+Q: What is the capital of France?
+A: [MOCK MODE] I could not find anything about that in the Brightpath Goods help center. Please
+   contact support@brightpath-goods.example or use live chat (Mon-Fri 08:00-20:00 CET) and a
+   human agent will help you.
+   mode=mock  model=extractive  0 ms
+   note: No knowledge base passage matched this question.
+   sources: (none)
+   [PASS] correctly refused an out-of-scope question
+------------------------------------------------------------------------------
+RESULT: 9/9 checks passed
