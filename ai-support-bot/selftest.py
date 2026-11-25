@@ -73,6 +73,57 @@ def report(question, result, expected, failures):
     return ok
 
 
+def compare_rerank():
+    """Stage 1 vs stage 1+2: does reranking actually change the top hit?
+
+    Runs the graded questions through both pipelines and reports hit@1. This is
+    the only honest way to claim a reranker helps: measure it, do not assume it.
+    """
+    graded = [(q, d) for q, d in CASES if d]
+    stage1 = stage2 = 0
+    flips = []
+    for question, expected in graded:
+        raw = app.INDEX.search(question, app.TOP_K)
+        new = app.rerank(question, raw)
+        first_raw = raw[0]["chunk"]["doc"] if raw else None
+        first_new = new[0]["chunk"]["doc"] if new else None
+        stage1 += first_raw == expected
+        stage2 += first_new == expected
+        if first_raw != first_new:
+            flips.append((question, first_raw, first_new, expected))
+
+    print(RULE)
+    print("Retrieval: stage 1 (BM25) vs stage 1+2 (BM25 then rerank)")
+    print("  graded questions : %d" % len(graded))
+    print("  hit@1  BM25      : %d/%d" % (stage1, len(graded)))
+    print("  hit@1  + rerank  : %d/%d" % (stage2, len(graded)))
+    if stage1 == stage2:
+        print("  -> baseline is already saturated on this set; rerank adds no hit@1 here")
+
+    # Diversity is where a reranker earns its place on a small, easy set:
+    # plain BM25 happily fills every slot from one long document.
+    docs1 = docs2 = 0.0
+    for question, _expected in graded:
+        raw = app.INDEX.search(question, app.TOP_K)
+        new = app.rerank(question, raw)
+        docs1 += len({h["chunk"]["doc"] for h in raw[:3]})
+        docs2 += len({h["chunk"]["doc"] for h in new[:3]})
+    n = max(1, len(graded))
+    print("  distinct docs in top-3  BM25   : %.2f" % (docs1 / n))
+    print("  distinct docs in top-3  +rerank: %.2f" % (docs2 / n))
+    if flips:
+        print("  ordering changed :")
+        for question, before, after, expected in flips:
+            mark = "gain" if first_new_ok(after, expected) and not first_new_ok(before, expected) else "swap"
+            print("    [%s] %-48s %s -> %s  (expected %s)"
+                  % (mark, question[:48], before, after, expected))
+    return stage1, stage2, len(graded)
+
+
+def first_new_ok(doc, expected):
+    return doc == expected
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", help="base URL of a running server, e.g. http://127.0.0.1:8000")
@@ -84,6 +135,8 @@ def main():
     print("index    : %d chunks / %d documents" % (
         len(app.INDEX.chunks), len(set(c["doc"] for c in app.INDEX.chunks))))
     print("target   : %s" % (args.url or "in-process (offline)"))
+
+    compare_rerank()
 
     failures = []
     for question, expected in CASES:

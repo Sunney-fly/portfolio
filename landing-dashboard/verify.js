@@ -65,9 +65,19 @@ if (missingAnchors.length) fail(`A: in-page anchors with no target: ${missingAnc
 else pass(`A: all ${anchors.length} in-page anchors resolve to a real id`);
 
 /* =====================================================================
-   B. zero external URLs
+   B. zero external *assets* (meta/canonical self-URLs are allowed)
+   --------------------------------------------------------------------
+   The invariant that matters is "renders with no network request": no CDN
+   script, no remote font, no remote image. Absolute URLs in <link rel=
+   "canonical"> and og:/twitter: meta are share metadata, not fetches, so
+   they are exempt — but they must point at this same site.
    ===================================================================== */
+const SITE = 'https://nanmount-r-ain.cn/';
 const externals = [];
+const metaOnlyAllowed = (line) =>
+  /rel="canonical"/i.test(line) ||
+  /(property|name)="(og|twitter):[^"]*"/i.test(line);
+
 [['index.html', htmlNoComments], ['styles.css', cssNoComments], ['app.js', jsNoComments]].forEach(
   ([name, text]) => {
     text.split('\n').forEach((line, i) => {
@@ -75,6 +85,8 @@ const externals = [];
           /fonts\.gstatic/i.test(line) || /unpkg|jsdelivr|cdnjs|googleapis/i.test(line)) {
         /* allow the svg/xml namespace declaration, it is not a network fetch */
         if (/www\.w3\.org\/2000\/svg/.test(line)) return;
+        /* allow share metadata that points at our own deployment */
+        if (metaOnlyAllowed(line) && line.includes(SITE)) return;
         externals.push(`${name}:${i + 1}: ${line.trim().slice(0, 120)}`);
       }
     });
@@ -83,7 +95,43 @@ const externals = [];
 if (externals.length) {
   fail(`B: ${externals.length} external reference(s) found:\n      ` + externals.join('\n      '));
 } else {
-  pass('B: zero external URLs, CDNs, or font hosts in index.html / styles.css / app.js');
+  pass('B: no external assets (CDN / font host / remote image); share metadata points at this site');
+}
+
+/* =====================================================================
+   B2. share metadata present and pointing at a file we actually ship
+   ===================================================================== */
+{
+  const grab = (re) => (htmlNoComments.match(re) || [])[1];
+  const ogImage = grab(/property="og:image"\s+content="([^"]+)"/i);
+  const ogTitle = grab(/property="og:title"\s+content="([^"]+)"/i);
+  const twCard = grab(/name="twitter:card"\s+content="([^"]+)"/i);
+  const problems = [];
+  if (!ogTitle) problems.push('missing og:title');
+  if (!twCard) problems.push('missing twitter:card');
+  if (!ogImage) {
+    problems.push('missing og:image');
+  } else {
+    const file = ogImage.split('/').pop();
+    if (!fs.existsSync(path.join(DIR, file))) problems.push(`og:image target ${file} is not in the bundle`);
+    if (!/^https?:\/\//i.test(ogImage)) problems.push('og:image must be absolute for crawlers');
+  }
+  if (problems.length) fail(`B2: share metadata — ${problems.join('; ')}`);
+  else pass(`B2: share metadata present, og:image ships with the bundle (${ogImage.split('/').pop()})`);
+}
+
+/* =====================================================================
+   B3. counters ship their real value (no "0%" before JS runs)
+   --------------------------------------------------------------------
+   Regression guard: counters used to be authored as 0 and only filled in by
+   IntersectionObserver, so no-JS / reduced-motion / prerender saw "0%".
+   ===================================================================== */
+{
+  const counters = [...htmlNoComments.matchAll(/<span[^>]*data-count="[^"]+"[^>]*>([^<]*)<\/span>/gi)];
+  const zeroed = counters.filter((m) => /^[\s$€]*0(\.0+)?\s*(%|hrs|M|k)?$/i.test(m[1].trim()));
+  if (!counters.length) fail('B3: no [data-count] elements found');
+  else if (zeroed.length) fail(`B3: ${zeroed.length} counter(s) still ship a zero placeholder: ${zeroed.map((m) => m[0].slice(0, 60)).join(' | ')}`);
+  else pass(`B3: all ${counters.length} counters ship their real value in the markup`);
 }
 
 /* =====================================================================

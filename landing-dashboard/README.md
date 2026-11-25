@@ -200,3 +200,30 @@ Run `node verify.js`. It is a static harness, not a browser:
 9. JS to CSS wiring: every class `app.js` toggles has a rule in the stylesheet
 
 `node --check app.js` is also used to prove the JavaScript parses.
+
+---
+
+## Round 2 — hardening pass (2026-10-25)
+
+Four issues were found by rendering the page at 360 / 390 / 768 / 1024 / 1440 px
+through the Chrome DevTools Protocol, in both the light and dark palettes, with and
+without `prefers-reduced-motion`.
+
+| # | Issue found | Fix |
+| --- | --- | --- |
+| 1 | Every counter was authored as `0`, so anything that never scrolls the stats row into view — no-JS, reduced-motion users, prerenderers, link-preview bots — read **0% / 0 hrs / $0M**. | The markup now ships the real figure (`38%`, `4.2 hrs`, `$1.9M`, `99.98%`); JS zeroes the glyphs only when it is actually going to animate them back up. |
+| 2 | The floating "Reorder now" card sat at `top: 22%`, directly on top of the hero's headline metric (`$412,880`), and "Forecast synced" covered the Stockouts value. | Repositioned to `top: 44%` (over the chart, not the number) and `bottom: -1.7rem` (clear of the chip row). |
+| 3 | Zero share metadata: no `og:` / `twitter:` tags, no `theme-color`, no `canonical`. A pasted link produced a bare URL. | Added Open Graph, Twitter card, `theme-color` (light/dark) and `canonical`, plus a 1200×630 `og.jpg`. |
+| 4 | `verify.js` check B treated *any* absolute URL as a violation, which made legitimate share metadata impossible. | Rewrote B to ban external **assets** only (CDN, remote font, remote image) and to require share metadata to point at this deployment. Added **B2** (og:image exists in the bundle and is absolute) and **B3** (no counter ships a zero placeholder). |
+
+Run the checks again with:
+
+```bash
+node verify.js
+```
+
+Expected: `All static checks passed.` — 12 checks, of which B2 and B3 are the new guards.
+
+Known limitation, deliberately unchanged: counters below the fold still start at zero
+and count up on scroll when motion is enabled. That is the intended effect; the markup
+fallback only matters when the animation will not run.

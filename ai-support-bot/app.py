@@ -362,6 +362,91 @@ def call_llm(question, hits, history, base_url, api_key, model, timeout=60):
     return data["choices"][0]["message"]["content"].strip()
 
 
+# --- Stage 2: rule-based reranking over the BM25 candidates ---
+RERANK_WEIGHTS = {"heading": 0.45, "phrase": 0.25, "proximity": 0.20, "prior": 0.10}
+
+
+def rerank(question, hits, keep=TOP_K):
+    """Re-rank BM25 candidates with cheap, explainable signals.
+
+    BM25 answers "does this chunk contain the query words"; it does not know
+    whether they appear *together*, *in order*, or *in the section heading*.
+    Three signals fix that, each linear in the chunk length:
+
+      heading    fraction of query terms that occur in the chunk's heading
+      phrase     fraction of query bigrams that occur contiguously and in order
+      proximity  share of the query-term span that is not filler
+      prior      a small decay on the BM25 rank, so ties break predictably
+
+    The result carries its own evidence (``rerank`` + ``bm25_rank``) so the new
+    ordering can be inspected instead of trusted. Each source document keeps at
+    most one slot, which stops a single long document from filling the context.
+    """
+    terms = tokenize(question)
+    if not terms or not hits:
+        return hits
+    qset = set(terms)
+    bigrams = list(zip(terms, terms[1:]))
+
+    rescored = []
+    for rank, hit in enumerate(hits):
+        chunk = hit["chunk"]
+        heading = set(tokenize(chunk["section"] + " " + chunk["title"]))
+        body = tokenize(chunk["text"])
+        joined = " ".join(chunk["text"].lower().split())
+
+        heading_ratio = len(qset & heading) / len(qset)
+        if bigrams:
+            joined_hits = sum(1 for a, b in bigrams if ("%s %s" % (a, b)) in joined)
+            phrase_ratio = joined_hits / len(bigrams)
+        else:
+            phrase_ratio = 0.0
+
+        positions = [i for i, t in enumerate(body) if t in qset]
+        if len(positions) >= 2:
+            span = positions[-1] - positions[0] + 1
+            proximity = min(1.0, len(positions) / span)
+        else:
+            proximity = 0.0
+
+        score = (
+            RERANK_WEIGHTS["heading"] * heading_ratio
+            + RERANK_WEIGHTS["phrase"] * phrase_ratio
+            + RERANK_WEIGHTS["proximity"] * proximity
+            + RERANK_WEIGHTS["prior"] * (1.0 / (1.0 + rank))
+        )
+        rescored.append((score, rank, hit))
+
+    rescored.sort(key=lambda item: (-item[0], item[1]))
+
+    def enriched(score, rank, hit):
+        item = dict(hit)
+        item["rerank"] = round(score, 4)
+        item["bm25_rank"] = rank + 1
+        return item
+
+    picked, per_doc = [], {}
+    for score, rank, hit in rescored:
+        doc = hit["chunk"]["doc"]
+        if per_doc.get(doc):
+            continue
+        per_doc[doc] = True
+        picked.append(enriched(score, rank, hit))
+        if len(picked) >= keep:
+            break
+
+    # Diversity can starve the list when the knowledge base is small.
+    if len(picked) < keep:
+        taken = {item["cid"] for item in picked}
+        for score, rank, hit in rescored:
+            if hit["cid"] in taken:
+                continue
+            picked.append(enriched(score, rank, hit))
+            if len(picked) >= keep:
+                break
+    return picked
+
+
 def snippet(text, limit=240):
     flat = " ".join(text.split())
     return flat if len(flat) <= limit else flat[: limit - 1].rstrip() + "\u2026"
@@ -370,7 +455,7 @@ def snippet(text, limit=240):
 def answer_question(question, history=None):
     question = (question or "").strip()
     started = time.time()
-    hits = INDEX.search(question, TOP_K)
+    hits = rerank(question, INDEX.search(question, TOP_K))
     base_url, api_key, model = llm_settings()
 
     note = ""
@@ -404,6 +489,8 @@ def answer_question(question, history=None):
                 "doc": h["chunk"]["doc"],
                 "section": h["chunk"]["section"],
                 "score": h["score"],
+                "rerank": h.get("rerank"),
+                "bm25_rank": h.get("bm25_rank"),
                 "snippet": snippet(h["chunk"]["text"]),
             }
             for i, h in enumerate(hits, 1)

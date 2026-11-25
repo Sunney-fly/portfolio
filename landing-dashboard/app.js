@@ -437,6 +437,16 @@
     var nodes = $$('[data-count]');
     if (!nodes.length) return;
 
+    /* Progressive enhancement: the markup ships the real figure, so no-JS,
+       reduced-motion and pre-scroll states all read correctly. Only zero the
+       glyphs when we are actually going to animate them back up. */
+    if (!reduceMotion) {
+      nodes.forEach(function (n) {
+        var decimals = parseInt(n.dataset.decimals || '0', 10);
+        n.textContent = (n.dataset.prefix || '') + formatNumber(0, decimals) + (n.dataset.suffix || '');
+      });
+    }
+
     function run(node) {
       if (node.dataset.counted === 'true') return;
       node.dataset.counted = 'true';
