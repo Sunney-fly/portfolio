@@ -1,6 +1,6 @@
 # Portfolio
 
-This repository holds three self-contained projects. Each one runs with no third-party dependencies,
+This repository holds five self-contained projects. Each one runs with no third-party dependencies,
 so you can clone a repository and run it without installing anything.
 
 ## 1. AI support assistant (retrieval-augmented generation)
@@ -72,10 +72,52 @@ open landing-dashboard/index.html
 
 Stack: HTML5, CSS3, vanilla JavaScript.
 
+## 4. Support agent (tool calling with guardrails)
+
+A customer-support agent that shows what "production-shaped" tool calling looks like:
+intent → tool call → permission check → human handoff.
+
+- Tools are declared with a parameter schema plus a permission predicate, so adding one is a dict
+  entry rather than another branch in an ever-growing if-chain
+- Ownership is verified **before** the tool runs, so the model cannot read someone else's order
+- Refunds above ¥500 escalate to a human without asking the model to decide
+- Handoff is a first-class outcome: unknown intent, tool failure and over-limit all hand off **and
+  say why**, instead of pretending the request was handled
+- Every decision leaves a trace (intent, matched keywords, tool, arguments, outcome, handoff reason)
+- 6/6 scripted turns behave as expected, including two permission denials and one over-limit handoff
+
+```bash
+cd support-agent
+python agent.py "我要退款 A1002，咖啡机坏了"
+```
+
+Stack: Python standard library. Intent matching is rule-based on purpose — it is explainable and
+testable, and the point of the demo is orchestration and permissions, not another classifier.
+
+## 5. Research agent (cited extraction)
+
+Given a topic or a list of URLs, it extracts key points and writes a report where every bullet is
+bound to the URL it came from.
+
+- search → fetch → extract → compose, with per-stage timing and failures reported separately
+- Each sentence keeps its source URL from extraction time, so a claim cannot appear without provenance
+- Sources that failed to fetch are listed in a "Not fetched" section and the report is marked partial
+- Chinese segmentation uses bigrams instead of a tokenizer dependency, so a sentence saying 「循环」
+  still matches a query for 「事件循环」
+- One real run: two pages, 0.3 s, 4 cited points, report written to disk
+
+```bash
+cd research-agent
+python research.py --query "asyncio 协程 事件循环" --urls <url1> <url2> --out report.md
+```
+
+Stack: Python standard library (`urllib`, `html.parser`, `re`). Auto-search can be degraded by
+Bing anti-bot behaviour; prefer the `--urls` mode when you need reproducible output.
+
 ## About
 
 Software Engineering undergraduate and independent developer. I ship complete, runnable systems.
 
-All three projects were run end-to-end before I published them here.
+All five projects were run end-to-end before I published them here.
 
 Contact: https://www.fiverr.com/sunny_dreamf
